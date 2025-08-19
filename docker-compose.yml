@@ -1,0 +1,84 @@
+version: "3.8"
+
+# CPU MAX 1.5
+# MEM MAX 350MB
+services:
+  # Load-balancer
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 9999:9999
+    networks:
+      - rinha_network
+    depends_on:
+      - app1
+      - app2
+    deploy:
+      resources:
+        limits:
+          cpus: "0.10"
+          memory: "10MB"
+
+  # Application 1
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    container_name: app1
+    environment:
+      RAILS_ENV: production
+      MONGODB_URL: "mongodb://mongo:27017/friday_api"
+      DEFAULT_PP_URL: "http://payment-processor-default:8080"
+      FALLBACK_PP_URL: "http://payment-processor-fallback:8080"
+      WEB_CONCURRENCY: 1
+      RAILS_MAX_THREADS: 5
+    depends_on:
+      - mongo
+    networks:
+      - rinha_network
+      - payment-processor
+    deploy:
+      resources:
+        limits:
+          cpus: "0.60"
+          memory: "140MB"
+
+  # Application 2
+  app2:
+    << : *app1
+    container_name: app2
+    deploy:
+      resources:
+        limits:
+          cpus: "0.60"
+          memory: "140MB"
+
+  # MongoDB
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    command: ["--wiredTigerCacheSizeGB", "0.05"]
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - rinha_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.20"
+          memory: "50MB"
+
+volumes:
+  mongo_data:
+ 
+# Defining a shared network so the services may communicate with themselves
+networks:
+  rinha_network:
+    driver: bridge
+  payment-processor:
+    external: true

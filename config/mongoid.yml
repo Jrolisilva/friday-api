@@ -1,0 +1,13 @@
+development:
+  clients:
+    default:
+      uri: <%= ENV.fetch("MONGODB_URL", "mongodb://localhost:27017/friday_api_dev") %>
+  options:
+    use_activesupport_time_zone: true
+
+production:
+  clients:
+    default:
+      uri: <%= ENV.fetch("MONGODB_URL") %>
+  options:
+    use_activesupport_time_zone: true
