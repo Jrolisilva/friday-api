@@ -8,7 +8,7 @@ processor.down:
 	@docker compose -f ../rinha-de-backend-2025/payment-processor/docker-compose.yml down --remove-orphans
 
 friday-api.up:
-	@docker compose up -d
+	@docker compose up -d --build
 
 friday-api.down:
 	@docker compose down -v

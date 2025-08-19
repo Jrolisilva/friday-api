@@ -25,10 +25,10 @@ services:
           memory: "10MB"
 
   # Application 1
-  app1:
+  app1: &app_def
     build:
       context: .
-      dockerfile: Dockerfile.app
+      dockerfile: Dockerfile
     container_name: app1
     environment:
       RAILS_ENV: production
@@ -50,7 +50,7 @@ services:
 
   # Application 2
   app2:
-    << : *app1
+    << : *app_def
     container_name: app2
     deploy:
       resources:
@@ -62,7 +62,7 @@ services:
   mongo:
     image: mongo:7.0
     container_name: mongo
-    command: ["--wiredTigerCacheSizeGB", "0.05"]
+    command: ["--wiredTigerCacheSizeGB", "0.25"]
     volumes:
       - mongo_data:/data/db
     networks:
@@ -75,7 +75,6 @@ services:
 
 volumes:
   mongo_data:
- 
 # Defining a shared network so the services may communicate with themselves
 networks:
   rinha_network:

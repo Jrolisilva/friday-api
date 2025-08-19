@@ -1,3 +1,4 @@
+ARG RUBY_VERSION=3.1.0
 FROM docker.io/library/ruby:${RUBY_VERSION}-slim AS base
 
 ENV APP_HOME=/rails \
@@ -12,11 +13,11 @@ WORKDIR ${APP_HOME}
 # Pacotes de runtime mínimos
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-      libjemalloc2 \
-      tzdata \
-      ca-certificates \
-      openssl \
-      curl && \
+    libjemalloc2 \
+    tzdata \
+    ca-certificates \
+    openssl \
+    curl && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # ---- Fase de build (gems + bootsnap) ---------------------------------------
