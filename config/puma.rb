@@ -1,11 +1,13 @@
-max_threads_count = ENV.fetch("RAILS_MAX_THREADS", 5).to_i
-min_threads_count = ENV.fetch("RAILS_MIN_THREADS", max_threads_count).to_i
-threads min_threads_count, max_threads_count
+workers Integer(ENV.fetch("WEB_CONCURRENCY", 1))
+
+min_threads = Integer(ENV.fetch("RAILS_MIN_THREADS", 8))
+max_threads = Integer(ENV.fetch("RAILS_MAX_THREADS", 12))
+threads min_threads, max_threads
 
 port ENV.fetch("PORT", 3000)
 environment ENV.fetch("RAILS_ENV", "production")
-workers ENV.fetch("WEB_CONCURRENCY", 1).to_i
+
 preload_app!
-
-plugin :tmp_restart
-
+queue_requests true
+worker_timeout 30
+persistent_timeout 60

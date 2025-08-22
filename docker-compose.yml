@@ -36,7 +36,9 @@ services:
       DEFAULT_PP_URL: "http://payment-processor-default:8080"
       FALLBACK_PP_URL: "http://payment-processor-fallback:8080"
       WEB_CONCURRENCY: 1
-      RAILS_MAX_THREADS: 5
+      RAILS_MIN_THREADS: 8
+      RAILS_MAX_THREADS: 12
+      SECRET_KEY_BASE: "729b012021859c07436b849ef20ee19890d147ca9cd2db36b0155a6509b5c3d3ea943a094142808d17a4be83e24b34d5d4cb0b374b1f60fb831045af5fd8cf1d"
     depends_on:
       - mongo
     networks:
@@ -45,18 +47,18 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.60"
-          memory: "140MB"
+          cpus: "0.65"
+          memory: "135MB"
 
   # Application 2
   app2:
-    << : *app_def
+    <<: *app_def
     container_name: app2
     deploy:
       resources:
         limits:
-          cpus: "0.60"
-          memory: "140MB"
+          cpus: "0.65"
+          memory: "135MB"
 
   # MongoDB
   mongo:
